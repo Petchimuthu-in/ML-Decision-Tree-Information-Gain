@@ -1,0 +1,24 @@
+import pandas as pd
+import numpy as np
+
+df = pd.read_csv("weather_play.csv")
+print(df)
+
+def entropy(data):
+    probability = data.value_counts(normalize=True)
+    return -sum(probability * np.log2(probability))
+
+parent_entropy = entropy(df["Play"])
+
+print("Parent Entropy:", round(parent_entropy, 2))
+
+children_entropy = 0
+
+for weather, group in df.groupby("Weather"):
+    weight = len(group) / len(df)
+    children_entropy += weight * entropy(group["Play"])
+
+information_gain = parent_entropy - children_entropy
+
+print("Children Entropy:", round(children_entropy, 2))
+print("Information Gain:", round(information_gain, 2))
